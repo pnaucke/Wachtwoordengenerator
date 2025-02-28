@@ -1,5 +1,13 @@
 import random
 import string
+import mysql.connector
+
+mydb = mysql.connector.connect(
+  host="127.0.0.1",
+  user="root",
+  password="",
+  database="wachtwoordengenerator"
+)
 
 # Wachtwoord lengte vragen
 length = int(input("Enter the password length: "))
@@ -36,4 +44,17 @@ def generate_password():
     password = ''.join(random.choice(characters3) for i in range(length))
     return password
 
-print(generate_password())
+# Hier voer ik het wachtwoord in de database
+mycursor = mydb.cursor()
+sql = "INSERT INTO wachtwoorden (wachtwoord) VALUES (%s)"
+val = (generate_password(),)
+mycursor.execute(sql, val)
+
+mydb.commit()
+
+print(mycursor.rowcount, "record inserted.")
+
+mycursor.close()
+mydb.close()
+
+print("Generated password:", generate_password())
