@@ -4,7 +4,7 @@ import mysql.connector
 
 mydb = mysql.connector.connect(
   host="127.0.0.1",
-  user="root",
+  user="wachtwoord",
   password="",
   database="wachtwoordengenerator"
 )
@@ -44,17 +44,31 @@ def generate_password():
     password = ''.join(random.choice(characters3) for i in range(length))
     return password
 
-# Hier voer ik het wachtwoord in de database
+# Wachtwoorden worden uit de database gehaald
 mycursor = mydb.cursor()
-sql = "INSERT INTO wachtwoorden (wachtwoord) VALUES (%s)"
-val = (generate_password(),)
-mycursor.execute(sql, val)
 
-mydb.commit()
+mycursor.execute("SELECT wachtwoord FROM wachtwoorden")
 
-print(mycursor.rowcount, "record inserted.")
+myresult = mycursor.fetchall()
 
-mycursor.close()
-mydb.close()
+new_password = generate_password()
 
-print("Generated password:", generate_password())
+# Controleren het wachtwoord al bestaat. Zoniet word het wachtwoord in de database gezet.
+if any(new_password == row[0] for row in myresult):
+    generate_password()
+else:
+    print("No identical password found in the databse.")
+    mycursor = mydb.cursor()
+    sql = "INSERT INTO wachtwoorden (wachtwoord) VALUES (%s)"
+    val = (new_password,)
+    mycursor.execute(sql, val)
+
+    mydb.commit()
+
+    print(mycursor.rowcount, "record inserted.")
+
+# Hier wordt de databse connectie afgesloten
+    mycursor.close()
+    mydb.close()
+
+print("Generated password:", new_password)
