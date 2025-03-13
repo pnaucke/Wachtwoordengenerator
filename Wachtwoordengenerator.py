@@ -46,12 +46,11 @@ def generate_password():
 
 # Wachtwoorden worden uit de database gehaald
 mycursor = mydb.cursor()
+new_password = generate_password()
 
-mycursor.execute("SELECT wachtwoord FROM wachtwoorden")
+mycursor.execute("SELECT wachtwoord FROM wachtwoorden WHERE wachtwoord = %s", (new_password,))
 
 myresult = mycursor.fetchall()
-
-new_password = generate_password()
 
 # Controleren het wachtwoord al bestaat. Zoniet word het wachtwoord in de database gezet.
 if any(new_password == row[0] for row in myresult):
