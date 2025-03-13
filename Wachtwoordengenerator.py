@@ -1,12 +1,18 @@
+import json 
 import random
 import string
 import mysql.connector
 
+# JSON-configuratie laden
+with open("Wachtwoordengenerator.json", "r") as file:
+    config = json.load(file)
+
+# Verbinding maken met de database
 mydb = mysql.connector.connect(
-  host="127.0.0.1",
-  user="wachtwoord",
-  password="",
-  database="wachtwoordengenerator"
+    host=config["host"],
+    user=config["user"],
+    password=config["password"],
+    database=config["database"]
 )
 
 # Wachtwoord lengte vragen
