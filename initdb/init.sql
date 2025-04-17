@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS wachtwoorden (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    wachtwoord VARCHAR(255) NOT NULL
+);
